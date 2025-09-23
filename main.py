@@ -4,11 +4,12 @@ from pixelToCartesian import *
 import cv2
 import matplotlib.pyplot as plt
 
-play_video = False
+#config:
+play_video = True
 
 def main():
     # play_video("video\initial_test.mp4", as_gray=True, scale=1, delay_ms=None, apply_threshold=True, thresh=249, show_mask=False)
-    video_path = r"video\initial_test.mp4"
+    video_path = r"video\initial_run3.mp4"
     cap = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
     assert cap.isOpened(), "Cannot open video"
 
@@ -63,9 +64,37 @@ def main():
     cv2.destroyAllWindows()
 
     # All frames processed; acc is your CartesianAccumulator(...)
-    ax = acc.plot(pixel_pitch=1.0, centered=True, min_count=1, mode="scatter", point_size=0.5, figsize=(6, 6))
-    plt.show()  # blocks until you close the window
+    acc.identify_bounds()
+    acc.identify_center()
+    acc.remove_unwanted_around_center(radius_to_width_ratio= 0.25)
 
+    acc.point_metrics(should_print=True, scale=40/341.84)
+
+    # plotting
+    fig, ax = plt.subplots(figsize=(6, 6))
+
+    # use the cached points you stored as acc.points (shape: N x 2)
+    pts = acc.pts
+    if pts is None or pts.size == 0:
+        raise ValueError("acc.points is empty. Run update_points(...) first.")
+
+    ax.scatter(pts[:, 0], pts[:, 1], s=10, marker='.', linewidths=0)
+
+    # optional: draw bounds if available (expects list of (x, y) corners, Cartesian order)
+    if acc.bounds:
+        xs, ys = zip(*(acc.bounds + [acc.bounds[0]]))  # close loop
+        ax.plot(xs, ys, color="red", linewidth=2)
+
+    # optional: draw center if available (expects tuple (x, y))
+    if acc.center:
+        ax.plot(acc.center[0], acc.center[1], 'x', color="red", markersize=10)
+
+    ax.set_aspect('equal', adjustable='box')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    ax.grid(True)
+    plt.tight_layout()
+    plt.show()
 
 if __name__ == "__main__":
     main()
