@@ -9,7 +9,7 @@ play_video = True
 
 def main():
     # play_video("video\initial_test.mp4", as_gray=True, scale=1, delay_ms=None, apply_threshold=True, thresh=249, show_mask=False)
-    video_path = r"video\initial_run3.mp4"
+    video_path = r"video\initial_run2.mp4"
     cap = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
     assert cap.isOpened(), "Cannot open video"
 
@@ -68,7 +68,7 @@ def main():
     acc.identify_center()
     acc.remove_unwanted_around_center(radius_to_width_ratio= 0.25)
 
-    acc.point_metrics(should_print=True, scale=40/341.84)
+    acc.point_metrics(should_print=True, scale=46/341.84)
 
     # plotting
     fig, ax = plt.subplots(figsize=(6, 6))
