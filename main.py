@@ -9,7 +9,7 @@ play_video = True
 
 def main():
     # play_video("video\initial_test.mp4", as_gray=True, scale=1, delay_ms=None, apply_threshold=True, thresh=249, show_mask=False)
-    video_path = r"video\initial_run2.mp4"
+    video_path = r"video\NanoConeMirror2.jpeg"
     cap = cv2.VideoCapture(video_path, cv2.CAP_FFMPEG)
     assert cap.isOpened(), "Cannot open video"
 
@@ -32,7 +32,8 @@ def main():
 
         # Process the frame
         grey = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        _, mask = cv2.threshold(grey, 249, 255, cv2.THRESH_BINARY)
+        #mask = grey
+        _, mask = cv2.threshold(grey, 9, 255, cv2.THRESH_BINARY)
         # mask must be uint8 with values {0,255}
         mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel, iterations=1)
 
